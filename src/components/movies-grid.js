@@ -11,16 +11,26 @@ export default function MoviesGrid() {
     }, []);
 
     const [searchTerm, setSearchTerm] = useState("");
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    const filteredMovies = movies.filter(movie => 
+        movie.title.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+    );
     return (
         <div>
             <input
                 className='search-input'
                 type="text"
                 placeholder='Search Movies...'
+                value={searchTerm}
+                onChange={handleSearchChange}
             />
             <div className='movies-grid'>
             {
-                movies.map(movie => (
+                filteredMovies.map(movie => (
                     <MovieCard key={movie.id} movie={movie}></MovieCard>
                 ))
             }

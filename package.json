@@ -1,5 +1,6 @@
 {
   "name": "moviedux",
+  "homepage": "https://denisacostaq.github.io/moviedux",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

@@ -5,14 +5,14 @@ import Footer from './components/footer';
 import MoviesGrid from './components/movies-grid';
 import WatchList from './components/watch-list';
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [watchList, setWatchList] = useState([]);
 
   useEffect(() => {
-      fetch("movies.json")
+      fetch(`${process.env.PUBLIC_URL}/movies.json`)
       .then(response => response.json())
       .then(data => setMovies(data));
   }, []);
@@ -27,7 +27,6 @@ function App() {
     <div className="App">
       <div className='container'>
         <Header></Header>
-        <Router>
           <nav>
             <ul>
               <Link to="/">Home</Link>
@@ -38,7 +37,6 @@ function App() {
             <Route path='/' element={<MoviesGrid movies={movies} watchList={watchList} toggleWatchList={toggleWatchList}/>}></Route>
             <Route path='/watchlist' element={<WatchList watchList={watchList} movies={movies}  toggleWatchList={toggleWatchList}/>}></Route>
           </Routes>
-        </Router>
       </div>
       <Footer></Footer>
     </div>

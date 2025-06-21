@@ -21,8 +21,10 @@ export default function MovieCard({movie, isWatchListed, toggleWatchList}) {
             <img src={`images/${movie.image}`} alt={movie.title} onError={handleError}/>
             <div className='movie-card-info'>
                 <h3 className='movie-card-title'>{movie.title}</h3>
-                <p className='movie-card-genere'>{movie.genere}</p>
-                <p className={`movie-card-rating ${getRatingClass(movie.rating)}`}>{movie.rating}</p>
+                <div>
+                    <span className='movie-card-genere'>{movie.genre}</span>
+                    <span className={`movie-card-rating ${getRatingClass(movie.rating)}`}>{movie.rating}</span>
+                </div>
             </div>
         </div>
     )

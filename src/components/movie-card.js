@@ -25,6 +25,16 @@ export default function MovieCard({movie, isWatchListed, toggleWatchList}) {
                     <span className='movie-card-genere'>{movie.genre}</span>
                     <span className={`movie-card-rating ${getRatingClass(movie.rating)}`}>{movie.rating}</span>
                 </div>
+                <label className='switch'>
+                    <input
+                      type='checkbox'
+                      checked={isWatchListed}
+                      onChange={() => toggleWatchList(movie.id)}>
+                    </input>
+                    <span className='slider'>
+                        <span className='slider-label'>{isWatchListed ? 'In Watch List' : 'Add to Watchlist'}</span>
+                    </span>
+                </label>
             </div>
         </div>
     )

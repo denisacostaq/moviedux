@@ -4,7 +4,7 @@ import MovieCard from './movie-card';
 
 export default function MoviesGrid({movies, watchList, toggleWatchList}) {
     const [searchTerm, setSearchTerm] = useState("");
-    const [genere, setGenere] = useState("All Generes");
+    const [genere, setGenere] = useState("All Genres");
     const [rating, setRating] = useState("All");
 
     const handleSearchChange = (e) => {

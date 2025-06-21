@@ -1,31 +1,78 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+# This workflow will do a clean installation of node dependencies, build the source code, and deploy to GitHub Pages.
 
-name: Node.js CI
+name: Node.js CI & Deploy
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true # Changed to true to deploy only the latest commit on main
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
+  # Run on pull requests to ensure the build and tests pass, but don't deploy
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    # Building and testing on a single LTS version is usually sufficient and faster
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+
+      # Only upload the build artifact if on the main branch
+      - name: Upload build artifact
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && matrix.node-version == '20.x'
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-build
+          path: build
+
+  deploy:
+    # This job requires the build to succeed first
+    needs: build
+
+    # Grant GITHUB_TOKEN the permissions required to deploy Pages
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    # Only run this job if pushing to the main branch
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      # Step 1: Download the build artifact from the previous job
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-build
+          path: build
+
+      # Step 2: Prepare the artifact for deployment
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "build"
+
+      # Step 3: Deploy the artifact to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

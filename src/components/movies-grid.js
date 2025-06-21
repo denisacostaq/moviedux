@@ -9,6 +9,8 @@ export default function MoviesGrid() {
         .then(response => response.json())
         .then(data => setMovies(data));
     }, []);
+
+    const [searchTerm, setSearchTerm] = useState("");
     return (
         <div>
             <input

@@ -10,12 +10,19 @@ export default function MoviesGrid() {
         .then(data => setMovies(data));
     }, []);
     return (
-        <div className='movies-grid'>
+        <div>
+            <input
+                className='search-input'
+                type="text"
+                placeholder='Search Movies...'
+            />
+            <div className='movies-grid'>
             {
                 movies.map(movie => (
                     <MovieCard key={movie.id} movie={movie}></MovieCard>
                 ))
             }
+            </div>
         </div>
     )
 }
